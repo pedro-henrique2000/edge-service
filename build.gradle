@@ -4,8 +4,8 @@ plugins {
 	id 'java'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+//group = 'com.example'
+//version = '0.0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
@@ -32,6 +32,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
+	}
+}
+
 bootBuildImage {
 	imageName = "${project.name}"
 	environment = ["BP_JVM_VERSION": "17.*"]
@@ -45,16 +52,6 @@ bootBuildImage {
 	}
 }
 
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-		mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
-	}
-}
-
-tasks.named('bootBuildImage') {
-	builder = 'paketobuildpacks/builder-jammy-base:latest'
-}
 
 tasks.named('test') {
 	useJUnitPlatform()
