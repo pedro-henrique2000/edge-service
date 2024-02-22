@@ -9,14 +9,14 @@ resilience4j:
   circuitbreaker:
     configs:
       default:
-        sliding-window-size: 20 #The size of the sliding window used to record the outcome of calls when the circuit is closed
-        permitted-number-of-calls-in-half-open-state: 5 #Number of permitted calls when the circuit is half-open
-        failure-rate-threshold: 50 #When the failure rate is above the threshold, the circuit becomes open.
-        wait-duration-in-open-state: 15000 #Waiting time before moving from open to half-open (ms)
+        sliding-window-size: 20
+        permitted-number-of-calls-in-half-open-state: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15000
   timelimiter:
     configs:
       default:
-        timeout-duration: 5s #Configures a timeout (seconds)
+        timeout-duration: 5s
 
 spring:
   config:
@@ -35,6 +35,19 @@ spring:
     name: edge-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: edge-service
+            client-secret: polar-keycloak-secret
+            scope: openid,roles
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/PolarBookshop
+
   cloud:
     config:
       uri: http://localhost:8888
@@ -56,6 +69,7 @@ spring:
           max-life-time: 60s
       default-filters:
         - SaveSession
+        - TokenRelay
         - name: RequestRateLimiter
           args:
             redis-rate-limiter:
@@ -75,6 +89,10 @@ spring:
               exceptions: java.io.IOException, java.util.concurrent.TimeoutException
 
       routes:
+        - id: spa-route
+          uri: ${SPA_URL:http://localhost:9004}
+          predicates:
+            - Path=/,/*.css,/*.js,/favicon.ico
         - id: catalog-route
           uri: ${CATALOG_SERVICE_URL:http://localhost:9001}/books
           predicates:

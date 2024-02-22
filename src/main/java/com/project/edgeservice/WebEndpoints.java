@@ -14,18 +14,10 @@ public class WebEndpoints {
 
     @Bean
     public RouterFunction<ServerResponse> routerFunction() {
-
         return RouterFunctions.route()
-            .GET("/catalog-fallback", request -> {
-                System.out.println("Calling fallback method for GET");
-                return ServerResponse.ok().body(Mono.just(""), String.class);
-            })
-            .POST("/catalog-fallback", request -> {
-                System.out.println("Calling fallback method for POST");
-                return ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).build();
-            })
+            .GET("/catalog-fallback", request -> ServerResponse.ok().body(Mono.just(""), String.class))
+            .POST("/catalog-fallback", request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).build())
             .build();
-
     }
 
 }
