@@ -1,6 +1,8 @@
 package com.project.edgeservice;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -19,6 +21,9 @@ class EdgeServiceApplicationTests {
 	@Container
 	static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7.0"))
 		.withExposedPorts(REDIS_PORT);
+
+	@MockBean
+	ReactiveClientRegistrationRepository clientRegistrationRepository;
 
 	@DynamicPropertySource
 	static void redisProperties(DynamicPropertyRegistry registry) {
